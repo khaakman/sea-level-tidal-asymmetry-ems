@@ -364,3 +364,16 @@ def segment_intersection_with_index(x0, y0, x1, y1, cx, cy):
 
     raise ValueError("No intersection found")
     return
+
+def compute_phase_lag(phases, phase_lag_constits, const_list):
+    phase_idx = np.zeros(len(phase_lag_constits))
+    
+    for i, c in enumerate(phase_lag_constits):
+        phase_idx[i] = np.where(np.array(const_list) == phase_lag_constits[i])[0][0]
+    
+    if len(phase_lag_constits) == 2:
+        phase_lag = (2*phases[int(phase_idx[0])] - phases[int(phase_idx[1])]) % 360
+    if len(phase_lag_constits) == 3:
+        phase_lag = (phases[int(phase_idx[0])] + phases[int(phase_idx[1])] - phases[int(phase_idx[2])]) % 360
+    
+    return phase_lag

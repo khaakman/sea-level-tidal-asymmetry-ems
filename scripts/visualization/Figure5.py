@@ -57,4 +57,4 @@ ax.text(0.02, 0.02, '(b)', transform=ax.transAxes,
         fontsize=14, fontweight='bold', va='bottom', ha='left')
 
 
-fig.savefig('../../figures/DCSM_2M2_M4_U_phase_lags.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+fig.savefig('../../figures/Figure5.png', dpi=300, bbox_inches='tight', pad_inches=0.05)

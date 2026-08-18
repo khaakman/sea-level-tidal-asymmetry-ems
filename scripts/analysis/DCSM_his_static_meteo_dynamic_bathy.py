@@ -15,7 +15,7 @@ import hatyan
 
 plt.style.use('ggplot')
 
-station = 'knock'
+station = 'borkumsudstrand'
 
 
 DCSM_names = {
@@ -41,32 +41,6 @@ if phase_lag_constits == ['M2', 'M4']:
     phase_lag_string = '2M2-M4'
 elif phase_lag_constits == ['M2', 'S2', 'MS4']:
     phase_lag_string = 'M2+S2-MS4'
-
-def spatial_map(lons, lats, var, clabel='', title='', savename='', **kwargs):
-    fig = plt.figure()
-    im = plt.scatter(lons, lats, c=var, s=5, picker=True, zorder=10, **kwargs)
-    plt.xlabel('Longitude [deg]')
-    plt.ylabel('Latitude [deg]')
-    clb = plt.colorbar(im)
-    clb.set_label(clabel)
-    plt.title(title)
-    
-    plt.scatter(7.030674, 53.327173, color='k', label='KNOCK')
-    
-    # lon_min_bbox, lon_max_bbox = 6.6, 7.7
-    # lat_min_bbox, lat_max_bbox = 53.1, 53.6
-    # lon_DCSM, lat_DCSM, bathy, _, _ = load_DCSM_bathymetry(fn_bathymetry_plot, lon_min_bbox, lat_min_bbox, lon_max_bbox, lat_max_bbox)
-    
-    # plt.scatter(lon_DCSM, lat_DCSM, c=bathy, s=1, vmax=2, vmin=-20, cmap=cmocean.cm.deep.reversed())
-
-
-    if savename != '':
-        fig.savefig('../../figures/{}.png'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
-    
-    return
-
-
-
 
 
 
@@ -129,21 +103,23 @@ def compute_single_meteo_year(meteo_year):
 
 def main():
     
-    lons, lats, phase_lags_1996, phase_lags_TG_1996 = compute_single_meteo_year(1996)
-    _, _, phase_lags_2022, phase_lags_TG_2022 = compute_single_meteo_year(2022)
+    lons, lats, _, phase_lags_DCSM_1996 = compute_single_meteo_year(1996)
+    _, _, _, phase_lags_DCSM_2022 = compute_single_meteo_year(2022)
     
-
+    np.save('../../processed_time_series/DCSM/{}_phase_lags_{}_static_meteo_1996.npy'.format(phase_lag_string, station), phase_lags_DCSM_1996)
+    np.save('../../processed_time_series/DCSM/{}_phase_lags_{}_static_meteo_2022.npy'.format(phase_lag_string, station), phase_lags_DCSM_2022)
+    
     #plt.title('{} ({} mm/yr)'.format(station, round(xhat[1],2)))
     
     
     A = np.ones((len(years), 2))
     A[:,1] = years
-    xhat_1996 = np.linalg.solve(A.T @ A, A.T @ phase_lags_TG_1996)
-    xhat_2022 = np.linalg.solve(A.T @ A, A.T @ phase_lags_TG_2022)
+    xhat_1996 = np.linalg.solve(A.T @ A, A.T @ phase_lags_DCSM_1996)
+    xhat_2022 = np.linalg.solve(A.T @ A, A.T @ phase_lags_DCSM_2022)
     
     plt.figure()
-    plt.plot(years, phase_lags_TG_1996, color='k', linestyle='solid', label='DCSM meteo 1996')
-    plt.plot(years, phase_lags_TG_2022, color='k', linestyle='dashed', label='DCSM meteo 2022')
+    plt.plot(years, phase_lags_DCSM_1996, color='k', linestyle='solid', label='DCSM meteo 1996')
+    plt.plot(years, phase_lags_DCSM_2022, color='k', linestyle='dashed', label='DCSM meteo 2022')
     #plt.plot(years, A@xhat, 'r')
     plt.ylabel('{} phase lag [deg]'.format(phase_lag_string))
     plt.xlabel('Year')
@@ -170,7 +146,7 @@ def main():
     #plt.savefig('../../figures/validation_tg.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
     
     plt.figure()
-    plt.plot(years, phase_lags_TG_1996, color='k', label='Numerical model')
+    plt.plot(years, phase_lags_DCSM_1996, color='k', label='Numerical model')
     #plt.plot(years, -1*np.cos(np.radians(phase_lags_TG_2022)), color='b', label='DCSM meteo 2022')
     #plt.plot(years, A@xhat, 'r')
     plt.ylabel('$-\cos(${} phase lag) [-]'.format(phase_lag_string))

@@ -114,7 +114,7 @@ def main():
     ax.set_xlabel('Year')
     ax.set_ylabel('Depth [m]')
     fig.subplots_adjust(wspace=0.5)
-    fig.savefig('../../figures/bathymetry_trends.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+    fig.savefig('../../figures/Figure2.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
     return
 
 

@@ -346,6 +346,11 @@ np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M0_M2.npy',
 np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M2_M4.npy', ts_friction_M2_M4)
 np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M2_M2.npy', ts_friction_M2_M2)
 np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M0_S2.npy', ts_friction_M0_S2)
+np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M0_M2_anomalies.npy', ts_friction_M0_M2_anomalies)
+np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M2_M4_anomalies.npy', ts_friction_M2_M4_anomalies)
+np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M2_M2_anomalies.npy', ts_friction_M2_M2_anomalies)
+np.save('../../processed_time_series/DCSM/MSL_contributions/friction_M0_S2_anomalies.npy', ts_friction_M0_S2_anomalies)
+
 
 plt.figure(figsize=(10, 4))
 plt.plot(bathy_years, ts_friction_M2_M4_anomalies, label='M2+M4')

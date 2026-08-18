@@ -110,7 +110,7 @@ def main():
     clb = plt.colorbar(bathy_im, cax=cax) 
     clb.set_label('Bathymetry [m]')
     
-    plt.savefig('../../figures/tide_gauge_locations.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+    plt.savefig('../../figures/Figure1.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
     
     return
 

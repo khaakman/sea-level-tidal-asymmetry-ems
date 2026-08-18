@@ -50,4 +50,4 @@ ax.set_title('Advection')
 ax.set_ylim(top=35)
 
 fig.supylabel('MSL contribution upstream [mm]', x=0.06)
-fig.savefig('../../figures/MSL_contributions.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+fig.savefig('../../figures/Figure7.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
