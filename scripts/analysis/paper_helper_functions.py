@@ -192,8 +192,8 @@ def cross_section_normal(lons, lats):
 
 def project_residual_current_centerline(lons, lats, Umean, Vmean, perpendicular=False):
     # Load manually defined centerline
-    fn_x = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_x.npy'
-    fn_y = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_y.npy'
+    fn_x = '../../data/centerline_x.npy'
+    fn_y = '../../data/centerline_y.npy'
     centerline_lon = np.load(fn_x)
     centerline_lat = np.load(fn_y)
     
@@ -241,8 +241,8 @@ def project_residual_current_centerline(lons, lats, Umean, Vmean, perpendicular=
 
 def project_amplitudes_centerline(lons, lats, A_U, A_V, phi_U, phi_V):
     # Load manually defined centerline
-    fn_x = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_x.npy'
-    fn_y = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_y.npy'
+    fn_x = '../../data/centerline_x.npy'
+    fn_y = '../../data/centerline_y.npy'
     centerline_lon = np.load(fn_x)
     centerline_lat = np.load(fn_y)
     
@@ -300,8 +300,8 @@ def project_amplitudes_centerline(lons, lats, A_U, A_V, phi_U, phi_V):
 
 
 def compute_estuary_length_between_cross_sections(lon0, lat0, lon1, lat1, lon2, lat2, lon3, lat3):
-    fn_x = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_x.npy'
-    fn_y = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/scripts/centerline_y.npy'
+    fn_x = '../../data/centerline_x.npy'
+    fn_y = '../../data/centerline_y.npy'
     
     centerline_lon = np.load(fn_x)
     centerline_lat = np.load(fn_y)
