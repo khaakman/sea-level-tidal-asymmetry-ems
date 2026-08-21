@@ -67,8 +67,6 @@ def compute_single_meteo_year(meteo_year):
     lons = np.zeros(len(grid_indices))
     lats = np.zeros(len(grid_indices))
     
-    
-    #nc_files = list(Path("/Users/kbhaakman/Documents/PhD/data/DCSM/output_meteo{}_varying_bathymetry".format(meteo_year)).glob("*.nc"))
     folder = Path("../../data/DCSM/hist_static_meteo_dynamic_bathymetry/")
     nc_files = list(folder.glob(f"*meteo{meteo_year}*.nc"))
     files_sorted = sorted(nc_files, key=bathy_year)
