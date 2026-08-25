@@ -69,7 +69,7 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, alp
     ax.set_title(title)
     fig.canvas.callbacks.connect('pick_event', on_pick)
     if savename != '':
-        fig.savefig('/Users/kbhaakman/Desktop/{}'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
+        fig.savefig('../../figures/{}'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
     return fig, ax
 
 

@@ -57,12 +57,12 @@ def main():
     fig = plt.figure(figsize=(11.69,8.27))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Mercator(central_longitude=0))
     ax.scatter(lons, lats, c='cyan', s=100, marker='*', label='Not in PSMSL', transform=ccrs.PlateCarree(), zorder=10)
-    ax.scatter(PSMSL_lons, PSMSL_lats, c='r', s=100, marker='*', label='PSMSL',  transform=ccrs.PlateCarree(), zorder=10)
+    ax.scatter(PSMSL_lons, PSMSL_lats, c='cyan', s=100, marker='*', label='PSMSL',  transform=ccrs.PlateCarree(), zorder=10)
     bathy_im = plot_bathymetry_ems(ax, downsampling_factor=8)
     ax.add_patch(poly_enclosed)
     ax.add_feature(cfeature.LAND, facecolor='lightgray')
     #ax.coastlines()
-    ax.legend(loc='lower left')
+    #ax.legend(loc='lower left')
     
     dy = 0.015
     fs = 18
