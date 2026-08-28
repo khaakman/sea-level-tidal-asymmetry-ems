@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 plt.style.use('ggplot')
-import cmcrameri.cm as cm
 from matplotlib.patches import Polygon
 from paper_helper_functions import compute_estuary_length_between_cross_sections, project_residual_current_centerline, project_amplitudes_centerline
 
