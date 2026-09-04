@@ -68,7 +68,7 @@ for year in np.arange(1996, 2023):
     elem_mean = np.full(nElem, np.nan)
     elem_area = np.zeros(nElem, dtype=float)  # area of the intersection (m^2)
     
-    # adjacency list: elements touching each node (we'll need it for nodal averaging)
+    # adjacency list: elements touching each node
     nodes_adj_elems = [[] for _ in range(nNode)]
     
     # loop elements (safe, but may be slow for millions of elements)

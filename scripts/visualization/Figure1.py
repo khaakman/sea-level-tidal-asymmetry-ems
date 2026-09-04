@@ -16,13 +16,13 @@ import cartopy.feature as cfeature
 from matplotlib.patches import Polygon
 plt.style.use('ggplot')
 
-stations = ['borkumsudstrand', 'borkumfischerbalje', 'emshorn', 'dukegat', 'knock', 'delfzijl', 'pogum'] 
-names = ['Borkum Sudstrand', 'Borkum Fischerbalje', 'Emshorn', 'Dukegat', 'Knock', 'Delfzijl', 'Pogum']
+stations = ['borkumsudstrand', 'borkumfischerbalje', 'emshorn', 'dukegat', 'knock', 'delfzijl', 'emdenneueseeschleuse', 'pogum'] 
+names = ['Borkum Südstrand', 'Borkum Fischerbalje', 'Emshörn', 'Dukegat', 'Knock', 'Delfzijl', 'Emden', 'Pogum']
 
 # bounding box Bathymetry for reference:
 # lon_min, lon_max = 6.2, 7.5
 # lat_min, lat_max = 53.2, 54.0
-extent = [6, 8, 53.1, 54.1]
+extent = [6, 7.8, 53.2, 54.1]
 lon_gridlines = FixedLocator([6.5, 7, 7.5])
 lat_gridlines = FixedLocator([53.4, 53.8])
 
@@ -70,13 +70,11 @@ def main():
     ax.text(PSMSL_lons[0], PSMSL_lats[0]+dy, s='2.', fontsize=fs, transform=ccrs.PlateCarree())
     ax.text(lons[1], lats[1]+dy, s='3.', fontsize=fs, transform=ccrs.PlateCarree())
     ax.text(lons[2], lats[2]+dy, s='4.', fontsize=fs, transform=ccrs.PlateCarree())
-    ax.text(lons[3], lats[3]+dy, s='5.', fontsize=fs, transform=ccrs.PlateCarree())
-    ax.text(PSMSL_lons[1]-0.01, PSMSL_lats[1]+dy, s='6.', fontsize=fs, transform=ccrs.PlateCarree())
+    ax.text(PSMSL_lons[1]-0.01, PSMSL_lats[1]+dy, s='5.', fontsize=fs, transform=ccrs.PlateCarree())
+    ax.text(lons[3], lats[3]+dy, s='6.', fontsize=fs, transform=ccrs.PlateCarree())
     ax.text(lons[4], lats[4]+dy, s='7.', fontsize=fs, transform=ccrs.PlateCarree())
+    ax.text(lons[5], lats[5]+dy, s='8.', fontsize=fs, transform=ccrs.PlateCarree())
     
-        
-        
-        
     
     if extent is not None:
         ax.set_extent(extent, crs=ccrs.PlateCarree())

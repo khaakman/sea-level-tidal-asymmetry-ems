@@ -9,6 +9,7 @@ Created on Mon Jul 20 16:14:44 2026
 import numpy as np
 import cmcrameri.cm as cm
 import matplotlib.pyplot as plt
+from scipy.stats import t
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 plt.style.use('ggplot')
@@ -19,6 +20,7 @@ const_list.remove('A0')
 import sys
 sys.path.append("../analysis") #to be able to load dictionary from paper_helper_functions.py
 from paper_helper_functions import coordinates_ems
+
 
 def compute_amp_phase_lag(constit, phase_lag_constits, years):
     amp_idx = np.where(np.array(const_list) == constit)[0][0]
@@ -50,16 +52,20 @@ def compute_amp_phase_lag(constit, phase_lag_constits, years):
     return amp_array, phase_array, phase_lag_array
 
 def compute_trend(y):
-    t = np.arange(len(y))
-    t = t[np.isfinite(y)]
-    y = y[np.isfinite(y)]
-    
     A = np.ones((len(y), 2))
     A[:,1] = np.arange(len(y))
     xhat = np.linalg.solve(A.T @ A, A.T @ y)
     trend = xhat[1]
-
-    return trend
+    residuals = y - A@xhat
+    Qxhxh = np.var(residuals) * np.linalg.inv(A.T @ A)
+    trend_sigma = np.sqrt(Qxhxh[1,1])
+    
+    df = len(y) - 2 #degrees of freedom
+    t_stat = trend / trend_sigma
+    # Two-sided p-value
+    p_value = 2 * t.sf(np.abs(t_stat), df=df)
+    
+    return trend, trend_sigma, p_value
 
 
 # Load tide gauge data
@@ -77,11 +83,18 @@ for i, name in enumerate(stations):
 amp_array, phase_array, phase_lag_array = compute_amp_phase_lag(constit, phase_lag_constits, years)
 
 trends = np.zeros(len(stations))
-
+trend_sigmas = np.zeros(len(stations))
+p_values = np.zeros(len(stations))
 for i in range(len(stations)):
-    trends[i] = compute_trend(np.cos(np.radians(phase_lag_array[:,i])))
-
-
+    trends[i], trend_sigmas[i], p_values[i] = compute_trend(np.cos(np.radians(phase_lag_array[:,i])))
+    if stations[i] == 'emdenneueseeschleuse':
+        plt.figure()
+        plt.plot(years, phase_lag_array[:,i])
+    if stations[i] == 'emshorn':
+        plt.figure()
+        plt.plot(years, phase_lag_array[:,i])
+        
+sig = p_values < 0.05
 
 # Load DCSM post-processed data
 M2_M4_elev_phase_2009_deg = np.load('../../processed_time_series/DCSM/harmonic_analysis/2M2_M4_elev_phase_2009.npy')
@@ -95,8 +108,9 @@ bathy_years = np.arange(1996, 2023)
 
 
 ts_2M2_M4_elev_phase_wrt_2009_cos = np.cos(np.radians(ts_2M2_M4_elev_phase_anomalies + M2_M4_elev_phase_2009_deg))
-M2_M4_elev_phase_trend = np.polyfit(bathy_years, ts_2M2_M4_elev_phase_wrt_2009_cos, deg=1)[0]
-
+coeffs, cov = np.polyfit(bathy_years, ts_2M2_M4_elev_phase_wrt_2009_cos, deg=1, cov=True)
+M2_M4_elev_phase_trend = coeffs[0,:]
+M2_M4_elev_phase_trend_unc = np.sqrt(cov[0, 0, :])
 
 # Visualization
 bound = np.nanpercentile(np.abs(M2_M4_elev_phase_trend[subtidal_mask]), 80)
@@ -107,7 +121,10 @@ ax.coastlines()
 ax.add_feature(cfeature.LAND)
 ax.set_extent([6.5, 7.6, 53.2, 53.7], crs=ccrs.PlateCarree())
 
-im = ax.scatter(lons_TG, lats_TG, c=trends, cmap=cm.vik, vmin=-bound, vmax=bound, s=100, transform=ccrs.PlateCarree())
+im = ax.scatter(lons_TG[sig], lats_TG[sig], c=trends[sig], cmap=cm.vik, vmin=-bound, vmax=bound, 
+                s=100, edgecolor='k', linewidth=1.5, transform=ccrs.PlateCarree())
+im = ax.scatter(lons_TG[~sig], lats_TG[~sig], c=trends[~sig], marker='s', cmap=cm.vik, vmin=-bound, vmax=bound, 
+                s=100, edgecolor='k', linewidth=1.5, transform=ccrs.PlateCarree())
 bbox = ax.get_position()
 cax = fig.add_axes([bbox.x1 + 0.01, bbox.y0, 0.02, bbox.height])
 clb = plt.colorbar(im, cax=cax)

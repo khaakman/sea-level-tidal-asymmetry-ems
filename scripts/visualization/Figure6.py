@@ -11,18 +11,46 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 plt.style.use('ggplot')
 import cmcrameri.cm as cm
+from scipy.stats import t
 
-years = np.arange(1996, 2023)
-lons = np.load('../../data/DCSM/lons.npy')
-lats = np.load('../../data/DCSM/lats.npy')
-mask_subtidal = np.load('../../data/DCSM/mask_subtidal.npy')
-MSL_anomalies = np.load('../../processed_time_series/DCSM/MSL_anomalies.npy')
-MSL_trends = np.polyfit(years, MSL_anomalies, deg=1)[0]
+
+
 
 def main():
-    bound = np.nanpercentile(abs(MSL_trends[mask_subtidal]), 95)
-    spatial_map(lons[mask_subtidal], lats[mask_subtidal], MSL_trends[mask_subtidal], vmin=-bound, vmax=bound, clabel='MSL trend [mm/yr]', savename='Figure6.png', cmap=cm.vik)
+    global years
+    global mask_subtidal
+    global MSL_anomalies
+    years = np.arange(1996, 2023)
+    lons = np.load('../../data/DCSM/lons.npy')
+    lats = np.load('../../data/DCSM/lats.npy')
+    mask_subtidal = np.load('../../data/DCSM/mask_subtidal.npy')
+    MSL_anomalies = np.load('../../processed_time_series/DCSM/MSL_anomalies.npy')
+    coeffs, cov = np.polyfit(years, MSL_anomalies, deg=1, cov=True)
+
+    # Slope and intercept
+    MSL_trends = coeffs[0, :]
+    MSL_trends_unc = np.sqrt(cov[0, 0, :])
+
+    df = len(years) - 2 #degrees of freedom
+
+    t_stat = MSL_trends / MSL_trends_unc
+    # Two-sided p-value
+    p_values = 2 * t.sf(np.abs(t_stat), df=df)
+    #significant = p_values < 0.05
+    #mask_subtidal &= significant
     
+    min_trend = np.nanmin(MSL_trends[mask_subtidal])
+    median_trend = np.nanmedian(MSL_trends[mask_subtidal])
+    q25, q75 = np.nanpercentile(MSL_trends[mask_subtidal], [25, 75])
+    max_trend = np.nanmax(MSL_trends[mask_subtidal])
+    print(min_trend, q25, median_trend, q75, max_trend, 'mm/yr')
+    print(q25*26, median_trend*26, q75*26, 'mm')
+    
+    
+    bound = np.nanpercentile(abs(MSL_trends[mask_subtidal]), 95)
+    spatial_map(lons[mask_subtidal], lats[mask_subtidal], MSL_trends[mask_subtidal], p_values=p_values[mask_subtidal], vmin=-bound, vmax=bound, clabel='MSL trend [mm/yr]', savename='Figure6.png', cmap=cm.vik)
+    bound_unc = np.nanpercentile(abs(MSL_trends_unc[mask_subtidal]), 95)
+    spatial_map(lons[mask_subtidal], lats[mask_subtidal], MSL_trends_unc[mask_subtidal], vmin=0, vmax=bound_unc, clabel='MSL trend uncertainty [mm/yr]', savename='Figure6_std.png', cmap='viridis')
     return
 
 
@@ -30,7 +58,7 @@ def on_pick(event):
     ind = event.ind[0]
     col = np.flatnonzero(mask_subtidal)[ind]
 
-    MSL = 1000 * MSL_anomalies[:,col]
+    MSL = MSL_anomalies[:,col]
     
     plt.figure()
     plt.plot(years, MSL, c='k')
@@ -39,7 +67,8 @@ def on_pick(event):
 
     return
 
-def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, alpha=None, clabel='', title='', savename=''):
+def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, 
+                alpha=None, p_values=None, p_threshold=0.05, clabel='', title='', savename=''):
     if vmin is None and vmax is None:
         bound = np.nanpercentile(np.abs(z), 95)
         vmin = -bound
@@ -60,6 +89,19 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, alp
     ax.add_feature(cfeature.LAND)
     ax.set_extent([6.5, 7.6, 53.2, 53.7], crs=ccrs.PlateCarree())
     im = ax.scatter(x, y, c=z, cmap=cmap, vmax=vmax, vmin=vmin, alpha=alpha, s=1, transform=ccrs.PlateCarree(), picker=True)
+    if p_values is not None:
+        non_sig = np.isfinite(p_values) & (p_values >= p_threshold)
+
+        ax.scatter(
+        x[non_sig],
+        y[non_sig],
+        color='black',
+        s=.05,          # small dots
+        alpha=1,
+        transform=ccrs.PlateCarree(),
+        zorder=3
+        )
+    
     if make_clb == 1:
         bbox = ax.get_position()
         cax = fig.add_axes([bbox.x1 + 0.01, bbox.y0, 0.02, bbox.height])
