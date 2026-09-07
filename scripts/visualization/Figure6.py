@@ -12,20 +12,24 @@ import cartopy.feature as cfeature
 plt.style.use('ggplot')
 import cmcrameri.cm as cm
 from scipy.stats import t
-
-
-
+import sys
+sys.path.append("../analysis") #to be able to load dictionary from paper_helper_functions.py
+from paper_helper_functions import hatch_insignificant_patches
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.stattools import acf
 
 def main():
     global years
     global mask_subtidal
     global MSL_anomalies
-    years = np.arange(1996, 2023)
+    
     lons = np.load('../../data/DCSM/lons.npy')
     lats = np.load('../../data/DCSM/lats.npy')
     mask_subtidal = np.load('../../data/DCSM/mask_subtidal.npy')
     MSL_anomalies = np.load('../../processed_time_series/DCSM/MSL_anomalies.npy')
+    years = np.arange(1996, 2023)
     coeffs, cov = np.polyfit(years, MSL_anomalies, deg=1, cov=True)
+
 
     # Slope and intercept
     MSL_trends = coeffs[0, :]
@@ -43,7 +47,6 @@ def main():
     median_trend = np.nanmedian(MSL_trends[mask_subtidal])
     q25, q75 = np.nanpercentile(MSL_trends[mask_subtidal], [25, 75])
     max_trend = np.nanmax(MSL_trends[mask_subtidal])
-    print(min_trend, q25, median_trend, q75, max_trend, 'mm/yr')
     print(q25*26, median_trend*26, q75*26, 'mm')
     
     
@@ -60,10 +63,26 @@ def on_pick(event):
 
     MSL = MSL_anomalies[:,col]
     
+    
+    
     plt.figure()
     plt.plot(years, MSL, c='k')
     plt.xlabel('Time')
     plt.ylabel('$\Delta$MSL w.r.t. 2009 bathymetry [mm]')
+    plt.title('Grid point {}'.format(col))
+    
+    A = np.ones((len(years),2))
+    A[:,0] = years
+    xhat = np.linalg.solve(A.T @ A, A.T @ MSL)
+    residuals = A@xhat - MSL
+    plot_acf(residuals, lags=10, alpha=0.05, zero=True)
+    
+    N = len(residuals)
+    acf_values = acf(residuals, nlags=10, fft=False)
+    Neff = N / (1 + 2 * np.sum(acf_values[1:]))
+
+    print(f"N = {N}")
+    print(f"Effective sample size = {Neff:.1f}")
 
     return
 
@@ -80,6 +99,13 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None,
     if alpha == None:
         alpha = 1
 
+    mask = np.isfinite(z)
+    x = x[mask]
+    y = y[mask]
+    z = z[mask]
+    if p_values is not None:
+        p_values = p_values[mask]
+    
     make_clb = 0
     if fig == None and ax == None:
         fig = plt.figure(figsize=(11.69,8.27))
@@ -88,19 +114,11 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None,
     ax.coastlines()
     ax.add_feature(cfeature.LAND)
     ax.set_extent([6.5, 7.6, 53.2, 53.7], crs=ccrs.PlateCarree())
+    
     im = ax.scatter(x, y, c=z, cmap=cmap, vmax=vmax, vmin=vmin, alpha=alpha, s=1, transform=ccrs.PlateCarree(), picker=True)
     if p_values is not None:
-        non_sig = np.isfinite(p_values) & (p_values >= p_threshold)
+        hatch_insignificant_patches(ax, x, y, p_values)
 
-        ax.scatter(
-        x[non_sig],
-        y[non_sig],
-        color='black',
-        s=.05,          # small dots
-        alpha=1,
-        transform=ccrs.PlateCarree(),
-        zorder=3
-        )
     
     if make_clb == 1:
         bbox = ax.get_position()

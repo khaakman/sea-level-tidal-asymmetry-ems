@@ -14,6 +14,7 @@ import rasterio
 from rasterio.windows import from_bounds
 from rasterio.warp import transform_bounds
 import cmocean
+from matplotlib.tri import Triangulation
 
 coordinates_ems = {
     'knock': (7.030674, 53.327173),
@@ -25,6 +26,25 @@ coordinates_ems = {
     'emdenneueseeschleuse': (7.186348, 53.336781),
     'pogum': (7.259801, 53.321351),
 }
+
+def hatch_insignificant_patches(ax, x, y, p_values, hatches=['xxxx']):
+    tri = Triangulation(x, y)
+
+    # compute max edge length per triangle to find phantom triangles
+    xt, yt = x[tri.triangles], y[tri.triangles]
+    edge1 = np.hypot(xt[:,0]-xt[:,1], yt[:,0]-yt[:,1])
+    edge2 = np.hypot(xt[:,1]-xt[:,2], yt[:,1]-yt[:,2])
+    edge3 = np.hypot(xt[:,2]-xt[:,0], yt[:,2]-yt[:,0])
+    max_edge = np.maximum.reduce([edge1, edge2, edge3])
+    
+    # inspect histogram to pick a sensible threshold before masking
+    threshold = np.percentile(max_edge, 90)  # tune this
+    tri.set_mask(max_edge > threshold)
+    
+    ax.tricontourf(tri, p_values, levels=[0.05, 1], colors='none', hatches=hatches, 
+                   transform=ccrs.PlateCarree(), zorder=10)
+    
+    return
 
 def downsample_average(array, factor):
     """
