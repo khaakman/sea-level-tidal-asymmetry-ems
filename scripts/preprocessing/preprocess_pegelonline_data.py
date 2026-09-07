@@ -17,8 +17,8 @@ def load_data(fn):
     data = data.set_index('timestamp')
     data.index = pd.to_datetime(data.index, format ='%Y-%m-%d %H:%M')
     data.index.name = 'datetime'
-    data = data.rename(columns={'value':'water_level'})
-    data['water_level'] = data['water_level'] / 100 #convert cm to m
+    data = data.rename(columns={'value':'values'})
+    data['values'] = data['values'] / 100 #convert cm to m
     
     ## Pegelonline data still has daylight saving time jumps, next four lines remove it.
     data.index = data.index.tz_localize(

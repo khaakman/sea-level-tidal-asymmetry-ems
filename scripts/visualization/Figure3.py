@@ -71,8 +71,8 @@ DCSM_phase_lags_station2_dynamic_meteo = np.load('../../processed_time_series/DC
 A, xhat_tg1, trend_sigma_tg1, _ = compute_trend(years, observed_phase_lags_station1)
 A, xhat_tg2, trend_sigma_tg2, _ = compute_trend(years, observed_phase_lags_station2)
 
-A, xhat_DCSM1, trend_sigma_DCSM1, _ = compute_trend(years[3:], DCSM_phase_lags_station1_dynamic_meteo[3:])
-A, xhat_DCSM2, trend_sigma_DCSM2, _ = compute_trend(years[3:], DCSM_phase_lags_station2_dynamic_meteo[3:])
+A, xhat_DCSM1, trend_sigma_DCSM1, _ = compute_trend(years[4:], DCSM_phase_lags_station1_dynamic_meteo[4:])
+A, xhat_DCSM2, trend_sigma_DCSM2, _ = compute_trend(years[4:], DCSM_phase_lags_station2_dynamic_meteo[4:])
 
 # Dynamic meteo plot
 fig, axes = plt.subplots(nrows=2, figsize=(10, 7))
