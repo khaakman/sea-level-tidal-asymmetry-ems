@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Dec  8 11:50:04 2025
-
-@author: kbhaakman
-"""
 
 import matplotlib.pyplot as plt
 import sys #to be able to load functions from paper_helper_functions.py inside analysis folder
@@ -39,7 +34,6 @@ polygon_enclosed = [
 poly_enclosed = Polygon(polygon_enclosed, edgecolor='red', facecolor='none', linewidth=2, transform=ccrs.PlateCarree())
 
 def main():
-    
     lons, lats = [], []
     PSMSL_lons, PSMSL_lats = [], []
 
@@ -53,16 +47,13 @@ def main():
             lons.append(lon)
             lats.append(lat)
         
-    
     fig = plt.figure(figsize=(11.69,8.27))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Mercator(central_longitude=0))
     ax.scatter(lons, lats, c='cyan', s=100, marker='*', label='Not in PSMSL', transform=ccrs.PlateCarree(), zorder=10)
     ax.scatter(PSMSL_lons, PSMSL_lats, c='cyan', s=100, marker='*', label='PSMSL',  transform=ccrs.PlateCarree(), zorder=10)
-    bathy_im = plot_bathymetry_ems(ax, downsampling_factor=8)
+    bathy_im = plot_bathymetry_ems(ax, downsampling_factor=1)
     ax.add_patch(poly_enclosed)
     ax.add_feature(cfeature.LAND, facecolor='lightgray')
-    #ax.coastlines()
-    #ax.legend(loc='lower left')
     
     dy = 0.015
     fs = 18
@@ -89,7 +80,6 @@ def main():
         gl.ylocator = lat_gridlines
     except NameError:
         pass
-    
     
 
     # Make numbered multiline string

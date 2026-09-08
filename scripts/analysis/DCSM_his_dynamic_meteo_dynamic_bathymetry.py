@@ -1,23 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 16 11:52:44 2026
 
-@author: kbhaakman
-"""
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
 import re
 import hatyan
-
-
 plt.style.use('ggplot')
 
 station = 'knock'
-
-
 
 DCSM_names = {
   'borkumfischerbalje': 'BorkumFischerbalje',

@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 20 14:19:20 2026
 
-@author: kbhaakman
-"""
 import numpy as np
 import cmcrameri.cm as cm
 import matplotlib.pyplot as plt

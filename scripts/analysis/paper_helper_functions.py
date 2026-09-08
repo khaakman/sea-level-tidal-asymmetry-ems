@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 13 11:37:39 2026
 
-@author: kbhaakman
-"""
 import numpy as np
 from pyproj import Transformer
 import matplotlib.pyplot as plt
@@ -74,7 +70,7 @@ def downsample_average(array, factor):
 
 
 def plot_bathymetry_ems(ax, downsampling_factor=8):
-    fn = '/Users/kbhaakman/Documents/PhD/data/EasyGSH-DB_bathymetry_harmonized_nodata/topography_2009_ger.tif'
+    fn = '../../data/bathymetry/topography_2009_ger.tif'
     lon_min, lon_max = 6.2, 7.5
     lat_min, lat_max = 53.2, 54.0
     
@@ -153,7 +149,7 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, alp
     ax.set_title(title)
     #fig.canvas.callbacks.connect('pick_event', on_pick)
     if savename != '':
-        fig.savefig('/Users/kbhaakman/Desktop/{}'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
+        fig.savefig('../../figures/{}'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
     return fig, ax
 
 

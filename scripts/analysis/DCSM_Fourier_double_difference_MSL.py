@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 10 13:23:55 2026
 
-@author: kbhaakman
-"""
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt

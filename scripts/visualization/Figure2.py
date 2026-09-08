@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov  3 11:58:55 2025
 
-@author: kbhaakman
-"""
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,8 +9,6 @@ plt.style.use('ggplot')
 plt.rcParams.update({'font.size': 16})
 
 percentile = 1  # for example
-#fn = '/Users/kbhaakman/Documents/PhD/tidal-asymmetry-trends/data/Quantile Regression-based Elevation Changes per Region.xlsx'
-#sheet = 'Ems-Dollard'
 
 fn = '../../data/bathymetry/Quantile Regression-based Elevation Changes per Morph. Unit.xlsx'
 sheet = 'EemsDollard'

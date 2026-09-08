@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.widgets import LassoSelector

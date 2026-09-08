@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 13 16:21:27 2026
-
-@author: kbhaakman
-"""
 
 import numpy as np
 import xarray as xr

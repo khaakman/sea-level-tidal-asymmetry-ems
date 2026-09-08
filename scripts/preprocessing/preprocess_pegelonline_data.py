@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 24 16:13:30 2025
 
-@author: kbhaakman
-"""
 import os
 import pandas as pd
 from datetime import timezone, timedelta
