@@ -25,9 +25,6 @@ global mask_subtidal
 global MSL_anomalies
 
 
-
-
-
 outputs = []
 for i, meteo_yr in enumerate(meteo_years):
     actual_folder = fourier_folder + '/A04_meteo{}_bathy{}_fourier/'.format(meteo_yr, meteo_yr)
@@ -71,17 +68,26 @@ for d in outputs[1:]:
     mask_subtidal &= d["mask_subtidal"]
 
 
-
-
+lons = lons[mask_subtidal]
+lats = lats[mask_subtidal]
+MSL_trends = MSL_trends[mask_subtidal]
+MSL_anomalies = MSL_anomalies[:, mask_subtidal]
 
 def closest_N_idx(lons, lats, lon, lat, n):
     d2 = (lons - lon)**2 + (lats - lat)**2
     return np.argpartition(d2, n)[:n]
-
-N = 1
+#%%
+N = 100
 indices_knock = closest_N_idx(lons, lats, coordinates_knock[0], coordinates_knock[1], N)
-indices_knock = indices_knock[mask_subtidal[indices_knock]]
+#indices_knock = indices_knock[mask_subtidal[indices_knock]]
 
+q25_trend = np.percentile(MSL_trends[indices_knock], 25)
+median_trend = np.median(MSL_trends[indices_knock])
+q75_trend = np.percentile(MSL_trends[indices_knock], 75)
+
+plt.figure()
+plt.hist(MSL_trends[indices_knock])
+print('Median trend: {:.2f} mm/yr (IQR: {:.2f} - {:.2f})'.format(median_trend, q25_trend, q75_trend))
 mean_MSL = np.mean(MSL_anomalies[:, indices_knock], axis=1)
 
 plt.figure()

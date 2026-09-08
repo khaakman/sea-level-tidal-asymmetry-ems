@@ -64,16 +64,19 @@ def on_pick(event):
     MSL = MSL_anomalies[:,col]
     
     
-    
-    plt.figure()
-    plt.plot(years, MSL, c='k')
-    plt.xlabel('Time')
-    plt.ylabel('$\Delta$MSL w.r.t. 2009 bathymetry [mm]')
-    plt.title('Grid point {}'.format(col))
-    
     A = np.ones((len(years),2))
     A[:,0] = years
     xhat = np.linalg.solve(A.T @ A, A.T @ MSL)
+    
+    
+    plt.figure()
+    plt.plot(years, MSL, c='k')
+    plt.plot(years, A@xhat, 'r')
+    plt.xlabel('Time')
+    plt.ylabel('$\Delta$MSL w.r.t. 2009 bathymetry [mm]')
+    plt.title('Grid point {}, trend: {} mm/yr'.format(col, round(xhat[0],2)))
+    
+    
     residuals = A@xhat - MSL
     plot_acf(residuals, lags=10, alpha=0.05, zero=True)
     

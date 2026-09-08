@@ -104,7 +104,7 @@ for i, meteo_yr in enumerate(meteo_years):
         "M4_u_phs_actual", "M4_v_phs_actual", "M4_u_phs_ref", "M4_v_phs_ref",
         "S2_u_phs_actual", "S2_v_phs_actual", "S2_u_phs_ref", "S2_v_phs_ref",
         "advection_M0_2009", "advection_M2_2009", "advection_M4_2009", 
-        "advection_S2_2009"]}
+        "advection_S2_2009", "mask_end"]}
         
     for j, partition_nr in enumerate(partitions):
         fn_actual = actual_folder + 'DCSM-FM_100m_00{}_fou.nc'.format(partition_nr)
@@ -219,6 +219,7 @@ for i, meteo_yr in enumerate(meteo_years):
     mask_entrance = poly_entrance.get_path().contains_points(grid_points)
     mask_end &= out['mask_subtidal']
     mask_entrance &= out['mask_subtidal']
+    out['mask_end'] = mask_end
     
     W_entrance, dy_entrance = cross_section_length(out['lon'], out['lat'], mask_entrance)
     W_end, dy_end = cross_section_length(out['lon'], out['lat'], mask_end)
@@ -295,11 +296,17 @@ for i, meteo_yr in enumerate(meteo_years):
 
     outputs.append(out)
 
-mask_subtidal = outputs[0]["mask_subtidal"].copy()
+mean_depth = np.mean(np.array([output["depth_actual"] for output in outputs]), axis=0)
+np.save('../../data/DCSM/mean_depth.npy', mean_depth)
 
+mask_subtidal = outputs[0]["mask_subtidal"].copy()
+mask_end = outputs[0]['mask_end'].copy()
 for d in outputs[1:]:
     mask_subtidal &= d["mask_subtidal"]
-    
+    mask_end &= d['mask_end']
+
+np.save('../../data/DCSM/mask_end.npy', mask_end)
+
 lons = outputs[0]['lon']
 lats = outputs[0]['lat']
 
