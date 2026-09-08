@@ -152,6 +152,7 @@ def main():
         clb.set_label('$2\phi^\eta_{M2} - \phi^\eta_{M4}$ trend [deg/yr]', fontsize=10)
     ax.text(0.02, 0.02, '(a)', transform=ax.transAxes,
             fontsize=14, fontweight='bold', va='bottom', ha='left')
+    ax.set_title('Observed')
     
     
     ax = fig.add_subplot(2, 1, 2, projection=ccrs.Mercator())
@@ -171,7 +172,7 @@ def main():
         clb.set_label('$2\phi^\eta_{M2} - \phi^\eta_{M4}$ trend [deg/yr]', fontsize=10)
     ax.text(0.02, 0.02, '(b)', transform=ax.transAxes,
             fontsize=14, fontweight='bold', va='bottom', ha='left')
-    
+    ax.set_title('Modeled')
     
     fig.savefig('../../figures/Figure4.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 
