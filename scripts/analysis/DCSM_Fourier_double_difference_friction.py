@@ -66,7 +66,67 @@ def spatial_map(x, y, z, fig=None, ax=None, vmin=None, vmax=None, cmap=None, alp
         fig.savefig('../../figures/{}'.format(savename), dpi=300, bbox_inches='tight', pad_inches=0.05)
     return fig, ax
 
+def current_ellipse_phase(A_u, A_v, phi_u, phi_v, degrees=True):
+    """
+    Compute tidal current ellipse parameters from east/north amplitude
+    and phase, following the standard rotary decomposition
+    (Foreman 1978; Pawlowicz, Beardsley & Lentz 2002).
 
+    Convention: u(t) = A_u * cos(omega*t - phi_u)
+                v(t) = A_v * cos(omega*t - phi_v)
+
+    Parameters
+    ----------
+    A_u, A_v : float
+        Current amplitudes (east, north component), same units (e.g. m/s).
+    phi_u, phi_v : float
+        Phase lags of u, v (same convention/units as `degrees` flag).
+    degrees : bool
+        If True (default), phi_u/phi_v are in degrees and all angular
+        outputs are returned in degrees. If False, radians throughout.
+
+    Returns
+    -------
+    dict with:
+        A_maj      : semi-major axis
+        A_min      : semi-minor axis (signed; + = CCW rotation, - = CW)
+        inclination: orientation of major axis (deg or rad, mod 180)
+        phase_ellipse : ellipse phase g_ellipse (deg or rad, mod 360)
+        A_p, A_m   : CCW and CW rotary amplitudes (diagnostic)
+        sense      : 'CCW' or 'CW' rotation sense of the current vector
+    """
+    if degrees:
+        phi_u_r = np.deg2rad(phi_u)
+        phi_v_r = np.deg2rad(phi_v)
+    else:
+        phi_u_r = phi_u
+        phi_v_r = phi_v
+
+    # --- Step 1: rotary components W+ (CCW) and W- (CW) ---
+    # From u = Au cos(wt - phu), v = Av cos(wt - phv)
+    Wp_re = 0.5 * (A_u * np.cos(phi_u_r) + A_v * np.sin(phi_v_r))
+    Wp_im = 0.5 * (A_v * np.cos(phi_v_r) - A_u * np.sin(phi_u_r))
+    Wm_re = 0.5 * (A_u * np.cos(phi_u_r) - A_v * np.sin(phi_v_r))
+    Wm_im = 0.5 * (A_u * np.sin(phi_u_r) + A_v * np.cos(phi_v_r))
+
+    Ap = np.hypot(Wp_re, Wp_im)          # CCW rotary amplitude
+    Am = np.hypot(Wm_re, Wm_im)          # CW rotary amplitude
+    alpha_p = np.arctan2(Wp_im, Wp_re)   # CCW rotary phase
+    alpha_m = np.arctan2(Wm_im, Wm_re)   # CW rotary phase
+
+    # --- Step 2: ellipse parameters ---
+    A_maj = Ap + Am
+    A_min = Ap - Am  # signed: + => CCW, - => CW
+
+    inclination = 0.5 * (alpha_p + alpha_m)
+    phase_ellipse = 0.5 * (alpha_m - alpha_p)
+
+    # wrap to conventional ranges
+    inclination = np.mod(inclination, np.pi)        # mod 180 deg
+    phase_ellipse = np.degrees(np.mod(phase_ellipse, 2 * np.pi)) # mod 360 deg
+    #phase_ellipse[phase_ellipse > np.pi] -= 2*np.pi
+    
+    return A_maj, A_min, phase_ellipse
 
 outputs = []
 for i, meteo_yr in enumerate(meteo_years):
@@ -118,6 +178,7 @@ for i, meteo_yr in enumerate(meteo_years):
         M2_v_amp_actual = data_actual.mesh2d_fourier017_amp.values
         M2_u_phs_actual = data_actual.mesh2d_fourier015_phs.values
         M2_v_phs_actual = data_actual.mesh2d_fourier017_phs.values
+        #M2_U_amp_actual, _, M2_U_phs_actual = current_ellipse_phase(M2_u_amp_actual, M2_v_amp_actual, M2_u_phs_actual, M2_v_phs_actual)
         M2_U_amp_actual, M2_U_phs_actual, _, _ = project_amplitudes_centerline(lons, lats, M2_u_amp_actual, M2_v_amp_actual, M2_u_phs_actual, M2_v_phs_actual)
         
         M4_elev_phs_actual = data_actual.mesh2d_fourier021_phs.values
@@ -126,6 +187,7 @@ for i, meteo_yr in enumerate(meteo_years):
         M4_v_amp_actual = data_actual.mesh2d_fourier023_amp.values
         M4_u_phs_actual = data_actual.mesh2d_fourier022_phs.values
         M4_v_phs_actual = data_actual.mesh2d_fourier023_phs.values
+        #M4_U_amp_actual, _, M4_U_phs_actual = current_ellipse_phase(M4_u_amp_actual, M4_v_amp_actual, M4_u_phs_actual, M4_v_phs_actual)
         M4_U_amp_actual, M4_U_phs_actual, _, _ = project_amplitudes_centerline(lons, lats, M4_u_amp_actual, M4_v_amp_actual, M4_u_phs_actual, M4_v_phs_actual)
         
         S2_u_amp_actual = data_actual.mesh2d_fourier019_amp.values
@@ -151,6 +213,7 @@ for i, meteo_yr in enumerate(meteo_years):
         M2_v_amp_ref = data_ref.mesh2d_fourier017_amp.values
         M2_u_phs_ref = data_ref.mesh2d_fourier015_phs.values
         M2_v_phs_ref = data_ref.mesh2d_fourier017_phs.values
+        #M2_U_amp_ref, _, M2_U_phs_ref = current_ellipse_phase(M2_u_amp_ref, M2_v_amp_ref, M2_u_phs_ref, M2_v_phs_ref)
         M2_U_amp_ref, M2_U_phs_ref, _, _ = project_amplitudes_centerline(lons, lats, M2_u_amp_ref, M2_v_amp_ref, M2_u_phs_ref, M2_v_phs_ref)
         
         M4_elev_phs_ref = data_ref.mesh2d_fourier021_phs.values
@@ -159,6 +222,7 @@ for i, meteo_yr in enumerate(meteo_years):
         M4_v_amp_ref = data_ref.mesh2d_fourier023_amp.values
         M4_u_phs_ref = data_ref.mesh2d_fourier022_phs.values
         M4_v_phs_ref = data_ref.mesh2d_fourier023_phs.values
+        #M4_U_amp_ref, _, M4_U_phs_ref = current_ellipse_phase(M4_u_amp_ref, M4_v_amp_ref, M4_u_phs_ref, M4_v_phs_ref)
         M4_U_amp_ref, M4_U_phs_ref, _, _ = project_amplitudes_centerline(lons, lats, M4_u_amp_ref, M4_v_amp_ref, M4_u_phs_ref, M4_v_phs_ref)
         
         S2_u_amp_ref = data_ref.mesh2d_fourier019_amp.values

@@ -195,11 +195,7 @@ for i, meteo_yr in enumerate(meteo_years):
         out['S2_u_phs_ref'].append(S2_u_phs_ref)
         out['S2_v_phs_ref'].append(S2_v_phs_ref)
         
-        
-        # out["friction_M2_M4_anomaly"].append(friction_M2_M4_anomaly)
-        # out["friction_M2_M2_anomaly"].append(friction_M2_M2_anomaly)
-        # out["friction_M0_M2_anomaly"].append(friction_M0_M2_anomaly)
-        # out["friction_M0_S2_anomaly"].append(friction_M0_S2_anomaly)
+
         mask_subtidal = (data_actual.mesh2d_fourier002_min_depth.values > 0.5) & (data_ref.mesh2d_fourier002_min_depth.values > 0.5)
         out["mask_subtidal"].append(mask_subtidal)
     # concatenate everything
