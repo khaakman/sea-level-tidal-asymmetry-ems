@@ -47,6 +47,7 @@ def main():
     
     
     bound = np.nanpercentile(abs(MSL_trends[mask_subtidal]), 95)
+    bound = 0.45
     spatial_map(lons[mask_subtidal], lats[mask_subtidal], MSL_trends[mask_subtidal], p_values=p_values[mask_subtidal], vmin=-bound, vmax=bound, clabel='MSL trend [mm/yr]', savename='Figure6.png', cmap=cm.vik)
     bound_unc = np.nanpercentile(abs(MSL_trends_unc[mask_subtidal]), 95)
     spatial_map(lons[mask_subtidal], lats[mask_subtidal], MSL_trends_unc[mask_subtidal], vmin=0, vmax=bound_unc, clabel='MSL trend uncertainty [mm/yr]', savename='Figure6_std.png', cmap='viridis')

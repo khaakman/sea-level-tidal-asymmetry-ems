@@ -162,8 +162,9 @@ for i, meteo_yr in enumerate(meteo_years):
         fn_manning = '../../data/DCSM/interpolated_manning_values_partition_{}.npy'.format(partition_nr)
         mannings = np.load(fn_manning)
         
-        
-        depth_actual = abs(data_actual.mesh2d_flowelem_bl.values)
+        MSL = data_actual.mesh2d_fourier001_mean.values
+        bed_level = data_actual.mesh2d_flowelem_bl.values
+        depth_actual = MSL - bed_level
         area_actual = data_actual.mesh2d_flowelem_ba.values
         out['volume'].append(depth_actual * area_actual)
         
@@ -198,7 +199,9 @@ for i, meteo_yr in enumerate(meteo_years):
         
         
         
-        depth_ref = abs(data_ref.mesh2d_flowelem_bl.values)
+        MSL = data_ref.mesh2d_fourier001_mean.values
+        bed_level = data_ref.mesh2d_flowelem_bl.values
+        depth_ref = MSL - bed_level
         area_ref = data_ref.mesh2d_flowelem_ba.values
         
         
@@ -261,7 +264,8 @@ for i, meteo_yr in enumerate(meteo_years):
         out["friction_M2_M2_anomaly"].append(friction_M2_M2_anomaly)
         out["friction_M0_M2_anomaly"].append(friction_M0_M2_anomaly)
         out["friction_M0_S2_anomaly"].append(friction_M0_S2_anomaly)
-        mask_subtidal = (data_actual.mesh2d_fourier002_min_depth.values > 0.5) & (data_ref.mesh2d_fourier002_min_depth.values > 0.5)
+
+        mask_subtidal = (data_actual.mesh2d_fourier002_min_depth.values > 0.01) & (data_ref.mesh2d_fourier002_min_depth.values > 0.01)
         out["mask_subtidal"].append(mask_subtidal)
         
         if meteo_yr == 2009:
@@ -421,26 +425,3 @@ plt.xlabel('Bathymetry year')
 plt.ylabel('MSL anomaly contribution upstream [mm]')
 #plt.savefig('../../figures/friction_contributions.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 
-def closest_N_idx(lons, lats, lon, lat, n):
-    d2 = (lons - lon)**2 + (lats - lat)**2
-    return np.argpartition(d2, n)[:n]
-
-coordinates_knock = (7.030674, 53.327173)
-
-N = 1
-indices_knock = closest_N_idx(lons, lats, coordinates_knock[0], coordinates_knock[1], N)
-indices_knock = indices_knock[mask_subtidal[indices_knock]]
-
-mean_MSL_anomaly = np.mean(MSL_anomalies[:, indices_knock], axis=1)
-
-
-friction_sum_anomalies = ts_friction_M0_M2_anomalies + ts_friction_M2_M4_anomalies #+ ts_friction_M0_S2# + ts_friction_M2_M2
-
-plt.figure(figsize=(10, 4))
-plt.plot(bathy_years, friction_sum_anomalies, label='Sum of M0+M2 and M2+M4 frictional contribution')
-plt.plot(bathy_years, mean_MSL_anomaly, color='k', label='Modeled MSL anomaly')
-plt.ylabel('MSL anomaly [mm]')
-plt.xlabel('Bathymetry year')
-plt.title('Mean sea level anomaly at Knock')
-plt.legend()
-#plt.savefig('../../figures/MSL_anomalies.png', dpi=300, bbox_inches='tight', pad_inches=0.05)

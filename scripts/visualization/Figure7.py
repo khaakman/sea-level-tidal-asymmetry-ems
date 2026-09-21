@@ -6,6 +6,15 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 plt.style.use('ggplot')
 
+colors = [
+    "#0072B2",  # Blue
+    "#E69F00",  # Orange
+    "#009E73",  # Bluish green
+    "#CC79A7",  # Reddish purple
+]
+
+plt.rcParams["axes.prop_cycle"] = plt.cycler(color=colors)
+
 
 bathy_years = np.arange(1996, 2023)
 

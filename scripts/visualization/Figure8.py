@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 def main():
     years = np.arange(1996, 2023)
@@ -22,7 +23,7 @@ def main():
     plt.plot(years, median_MSL_anomaly, color='k', label='Modeled MSL anomaly')
     plt.ylabel('MSL anomaly [mm]')
     plt.xlabel('Bathymetry year')
-    plt.title('Mean sea level anomaly at upstream boundary')
+    #plt.title('Mean sea level anomaly at upstream boundary')
     plt.legend()
     plt.savefig('../../figures/Figure8.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 

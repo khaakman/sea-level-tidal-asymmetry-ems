@@ -5,12 +5,23 @@ import os
 import numpy as np
 import pandas as pd
 import hatyan
+import datetime
 
 stations = ['borkumfischerbalje', 'borkumsudstrand', 'dukegat', 'knock', 'emshorn', 'pogum', 'emdenneueseeschleuse']
 
 def load_data(fn):
     data = pd.read_csv(fn, delimiter=',', index_col=0)
     data.index = pd.to_datetime(data.index, format ='%Y-%m-%d %H:%M:%S')
+    data = data[data.index < datetime.datetime(year=2023, month=1, day=1)]
+    
+    completeness = data["values"].notna().resample("YE").sum().to_frame("valid")
+    completeness["expected"] = completeness.index.year.map(
+        lambda y: 366 if pd.Timestamp(f"{y}-12-31").is_leap_year else 365
+        ) * 24 * 60
+    completeness["completeness_%"] = 100 * completeness["valid"] / completeness["expected"]
+    print(completeness)
+    
+    print('Mean completeness: ', round(100*(np.sum(completeness['valid']) / np.sum(completeness['expected'])),1))
     return data
 
 def main():

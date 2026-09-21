@@ -30,8 +30,8 @@ polygon_entrance = [
     (6.5701, 53.5450)
 ]
 
-
-global mask_subtidal
+mask_subtidal = np.load('../../data/DCSM/mask_subtidal.npy')
+#global mask_subtidal
 g = 9.81
 
 def on_pick(event):
@@ -117,8 +117,9 @@ for i, meteo_yr in enumerate(meteo_years):
         out["lon"].append(lons)
         out["lat"].append(lats)
         
-        
-        depth_actual = abs(data_actual.mesh2d_flowelem_bl.values)
+        MSL = data_actual.mesh2d_fourier001_mean.values
+        bed_level = data_actual.mesh2d_flowelem_bl.values
+        depth_actual = MSL - bed_level
         out["depth_actual"].append(depth_actual)
         area_actual = data_actual.mesh2d_flowelem_ba.values
         
@@ -157,8 +158,9 @@ for i, meteo_yr in enumerate(meteo_years):
         
         
         
-        
-        depth_ref = abs(data_ref.mesh2d_flowelem_bl.values)
+        MSL = data_ref.mesh2d_fourier001_mean.values
+        bed_level = data_ref.mesh2d_flowelem_bl.values
+        depth_ref = MSL - bed_level
         out["depth_ref"].append(depth_ref)
         area_ref = data_ref.mesh2d_flowelem_ba.values
         out['volume'].append(depth_ref * area_ref)
@@ -196,8 +198,6 @@ for i, meteo_yr in enumerate(meteo_years):
         out['S2_v_phs_ref'].append(S2_v_phs_ref)
         
 
-        mask_subtidal = (data_actual.mesh2d_fourier002_min_depth.values > 0.5) & (data_ref.mesh2d_fourier002_min_depth.values > 0.5)
-        out["mask_subtidal"].append(mask_subtidal)
     # concatenate everything
     for k in out:
         if len(out[k]) > 0:
@@ -208,8 +208,8 @@ for i, meteo_yr in enumerate(meteo_years):
     poly_end = Polygon(polygon_end, edgecolor='red', facecolor='none', transform=ccrs.PlateCarree())
     mask_end = poly_end.get_path().contains_points(grid_points)
     mask_entrance = poly_entrance.get_path().contains_points(grid_points)
-    mask_end &= out['mask_subtidal']
-    mask_entrance &= out['mask_subtidal']
+    mask_end &= mask_subtidal
+    mask_entrance &= mask_subtidal
     out['mask_end'] = mask_end
     
     W_entrance, dy_entrance = cross_section_length(out['lon'], out['lat'], mask_entrance)
@@ -254,6 +254,10 @@ for i, meteo_yr in enumerate(meteo_years):
     advection_actual['M4_end'] = 1/(2*g) * dy_end * np.nansum(H_end_actual * 0.5 * A_U_M4_end_actual**2)
     advection_actual['S2_end'] = 1/(2*g) * dy_end * np.nansum(H_end_actual * 0.5 * A_U_S2_end_actual**2)
     
+    # plt.figure()
+    # plt.plot(H_entrance_actual * 0.5 * A_U_M2_entrance_actual**2)
+    # plt.title(meteo_yr)
+    
     advection_ref = {}
     advection_ref['M0_entrance'] = 1/(2*g) * dy_entrance * np.nansum(H_entrance_ref * A_U_M0_entrance_ref**2)
     advection_ref['M2_entrance'] = 1/(2*g) * dy_entrance * np.nansum(H_entrance_ref * 0.5 * A_U_M2_entrance_ref**2)
@@ -290,10 +294,9 @@ for i, meteo_yr in enumerate(meteo_years):
 mean_depth = np.mean(np.array([output["depth_actual"] for output in outputs]), axis=0)
 np.save('../../data/DCSM/mean_depth.npy', mean_depth)
 
-mask_subtidal = outputs[0]["mask_subtidal"].copy()
+
 mask_end = outputs[0]['mask_end'].copy()
 for d in outputs[1:]:
-    mask_subtidal &= d["mask_subtidal"]
     mask_end &= d['mask_end']
 
 np.save('../../data/DCSM/mask_end.npy', mask_end)
