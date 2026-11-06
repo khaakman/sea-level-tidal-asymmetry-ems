@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#%%
+import numpy as np
 import matplotlib.pyplot as plt
 import sys #to be able to load functions from paper_helper_functions.py inside analysis folder
 sys.path.append("../analysis")
@@ -49,8 +50,8 @@ def main():
         
     fig = plt.figure(figsize=(11.69,8.27))
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.Mercator(central_longitude=0))
-    ax.scatter(lons, lats, c='cyan', s=100, marker='*', label='Not in PSMSL', transform=ccrs.PlateCarree(), zorder=10)
-    ax.scatter(PSMSL_lons, PSMSL_lats, c='cyan', s=100, marker='*', label='PSMSL',  transform=ccrs.PlateCarree(), zorder=10)
+    ax.scatter(lons, lats, c='magenta', s=100, marker='*', label='Not in PSMSL', transform=ccrs.PlateCarree(), zorder=10)
+    ax.scatter(PSMSL_lons, PSMSL_lats, c='magenta', s=100, marker='*', label='PSMSL',  transform=ccrs.PlateCarree(), zorder=10)
     bathy_im = plot_bathymetry_ems(ax, downsampling_factor=1)
     ax.add_patch(poly_enclosed)
     ax.add_feature(cfeature.LAND, facecolor='lightgray')
@@ -105,3 +106,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+# %%
