@@ -5,6 +5,7 @@ Created on Mon Sep 21 10:40:48 2026
 
 @author: kbhaakman
 """
+#%%
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
@@ -321,3 +322,4 @@ def reconstruct_tides(out, constituents, frequencies, n_times=1000):
 
 if __name__ == '__main__':
     out = main()
+# %%

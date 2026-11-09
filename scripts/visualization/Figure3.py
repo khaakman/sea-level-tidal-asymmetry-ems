@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#%%
 import matplotlib.pyplot as plt
 import numpy as np
 import hatyan
@@ -74,10 +74,10 @@ fig, axes = plt.subplots(nrows=2, figsize=(10, 7))
 ax = axes[0]
 ax.plot(years, observed_phase_lags_station1, label='Observed')
 ax.plot(years[np.isfinite(observed_phase_lags_station1)], A@xhat_tg1, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_tg1[1], trend_sigma_tg1), color='r')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_tg1[1], trend_sigma_tg1), color='r')
 ax.plot(years, DCSM_phase_lags_station1_dynamic_meteo, label='Modeled', color='k')
 ax.plot(years[np.isfinite(observed_phase_lags_station1)], A@xhat_DCSM1, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_DCSM1[1], trend_sigma_DCSM1), color='k')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_DCSM1[1], trend_sigma_DCSM1), color='k')
 ax.legend()
 ax.set_title(station1_display_name)
 ax.text(0.02, 0.95, "(a)", transform=ax.transAxes, fontsize=14, fontweight='bold',
@@ -87,10 +87,10 @@ ax.text(0.02, 0.95, "(a)", transform=ax.transAxes, fontsize=14, fontweight='bold
 ax = axes[1]
 ax.plot(years, observed_phase_lags_station2)
 ax.plot(years[np.isfinite(observed_phase_lags_station2)], A@xhat_tg2, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_tg2[1], trend_sigma_tg2), color='r')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_tg2[1], trend_sigma_tg2), color='r')
 ax.plot(years, DCSM_phase_lags_station2_dynamic_meteo, color='k')
 ax.plot(years[np.isfinite(observed_phase_lags_station2)], A@xhat_DCSM2, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_DCSM2[1], trend_sigma_DCSM2), color='k')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_DCSM2[1], trend_sigma_DCSM2), color='k')
 ax.set_xlabel('Year')
 ax.set_title(station2_display_name)
 ax.text(0.02, 0.95, "(b)", transform=ax.transAxes, fontsize=14, fontweight='bold',
@@ -112,7 +112,7 @@ fig, axes = plt.subplots(nrows=2, figsize=(10, 7))
 ax = axes[0]
 ax.plot(years, observed_phase_lags_station1, label='Observed')
 ax.plot(years[np.isfinite(observed_phase_lags_station1)], A@xhat_tg1, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_tg1[1], trend_sigma_tg1), color='r')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_tg1[1], trend_sigma_tg1), color='r')
 ax.plot(years, DCSM_phase_lags_station1_static_meteo_1996, label='Modeled meteo 1996', color='k')
 ax.plot(years, DCSM_phase_lags_station1_static_meteo_2022, linestyle='dashed', label='Modeled meteo 2022', color='k')
 # ax.plot(years[np.isfinite(observed_phase_lags_station1)], A@xhat_DCSM1, linestyle='dashed', 
@@ -126,7 +126,7 @@ ax.text(0.02, 0.95, "(a)", transform=ax.transAxes, fontsize=14, fontweight='bold
 ax = axes[1]
 ax.plot(years, observed_phase_lags_station2)
 ax.plot(years[np.isfinite(observed_phase_lags_station2)], A@xhat_tg2, linestyle='dashed', 
-        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr'.format(xhat_tg2[1], trend_sigma_tg2), color='r')
+        label='Fit ({:.2f} $\pm$ {:.2f} deg/yr)'.format(xhat_tg2[1], trend_sigma_tg2), color='r')
 ax.plot(years, DCSM_phase_lags_station2_static_meteo_1996, color='k')
 ax.plot(years, DCSM_phase_lags_station2_static_meteo_2022, linestyle='dashed', color='k')
 # ax.plot(years[np.isfinite(observed_phase_lags_station2)], A@xhat_DCSM2, linestyle='dashed', 
@@ -139,3 +139,4 @@ ax.legend()
 plt.subplots_adjust(hspace=0.3)
 fig.supylabel("{} elevation phase lag [deg]".format(phase_lag_string), x=0.05)
 fig.savefig('../../figures/Figure3_static_meteo.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+# %%
